@@ -12,10 +12,12 @@ fi
 if [ "$REINSTALL" != "yes" ]; then
     mkdir "$1"
 fi
-wget -O "$1/PKGBUILD" "https://git.archlinux.org/svntogit/community.git/plain/trunk/PKGBUILD?h=packages/$1"
-if [ ! -f "$1/PKGBUILD" ]; then
+wget -O "$1/PKGBUILD" "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=$1"
+RWGET=$?
+if [ ! -f "$1/PKGBUILD" ] || [ $RWGET -ne 0 ]; then
  echo "$1 not found."
  rm -rf "$1"
+ exit 1
 fi
 VERSION=$(grep pkgver= $1/PKGBUILD | awk -F '=' '{print $2}')
 REVISION=$(grep pkgrel= $1/PKGBUILD | awk -F '=' '{print $2}')
