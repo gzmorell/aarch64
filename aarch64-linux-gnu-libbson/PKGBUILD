@@ -1,0 +1,34 @@
+# $Id$
+# Maintainer: Francisco Gonzalez <gzmorell @ gmail . com>
+
+_target=aarch64-linux-gnu
+pkgname=${_target}-libbson
+_pkgname=libbson
+pkgver=1.9.5
+pkgrel=1
+pkgdesc='A BSON utility library.'
+arch=('x86_64')
+url='http://www.mongodb.org/display/DOCS/C+Language+Center'
+license=('Apache')
+depends=("${_target}-glibc")
+makedepends=('python')
+source=("$_pkgname-$pkgver.tar.gz::https://github.com/mongodb/$_pkgname/archive/$pkgver.tar.gz")
+sha512sums=('14bc75989baac550f42939ea161fa7872b950e5b669dc8f19e897f0783b04e0212e5e722b3fcdf946308b9a68bc066502ed8238dad92e342e5f49b8b2cc8f484')
+
+build() {
+if [ n != "$RUN_PREPARE" ]; then
+  if [ 1 = "$ccache" ]; then
+    export CC=${CC:-ccache ${_target}-gcc}
+    export CXX=${CXX:-ccache ${_target}-g++}
+  fi
+  unset CFLAGS CXXFLAGS
+  cd $_pkgname-$pkgver
+  ./autogen.sh --prefix=/usr/${_target}/usr --with-sysroot=/usr/${_target} --host=${_target}
+  make
+fi
+}
+
+package() {
+  cd $_pkgname-$pkgver
+  make DESTDIR="$pkgdir" install
+}
