@@ -15,7 +15,7 @@ makedepends=(gmp mpfr)
 options=(!emptydirs !strip)
 source=(https://gcc.gnu.org/pub/gcc/releases/gcc-$pkgver/gcc-$pkgver.tar.xz{,.sig}
         #https://gcc.gnu.org/pub/gcc/snapshots/$_snapshot/gcc-$_snapshot.tar.xz
-        http://isl.gforge.inria.fr/isl-$_islver.tar.bz2)
+        http://isl.gforge.inria.fr/isl-$_islver.tar.bz2
 sha256sums=('1d1866f992626e61349a1ccd0b8d5253816222cdc13390dcfaa74b093aa2b153'
             'SKIP'
             'd59726f34f7852a081fbd3defd1ab2136f174110fc2e0c8d10bb122173fa9ed8')

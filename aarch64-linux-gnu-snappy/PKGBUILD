@@ -15,11 +15,19 @@ depends=("${_target}-glibc" "${_target}-gcc")
 checkdepends=('zlib')
 makedepends=('cmake' 'clang')
 source=("https://github.com/google/snappy/archive/$pkgver.tar.gz"
-        snappy.pc)
+        snappy.pc
+        "https://raw.githubusercontent.com/gzmorell/aarch64/master/cmake/aarch64_toolchain.cmake")
 md5sums=('ee9086291c9ae8deb4dac5e0b85bf54a'
-         '4b491e29a8142fedd11472306f5c1192')
+         '5a7c344303765f9d660e5e759e1daa98'
+         '51d69dd72dc80522735d940ceb066986')
 
 build() {
+if [ n != "$RUN_PREPARE" ]; then
+  if [ 1 = "$ccache" ]; then
+    export CC=${CC:-ccache ${_target}-gcc}
+    export CXX=${CXX:-ccache ${_target}-g++}
+  fi
+  unset CFLAGS CXXFLAGS
   cd "$_pkgname-$pkgver"
 
   # compile without assertions
@@ -28,20 +36,24 @@ build() {
   # export CXX=clang++
 
   cmake \
-    -DCMAKE_INSTALL_PREFIX=/usr \
-    -DCMAKE_INSTALL_LIBDIR=/usr/lib \
+	-DCMAKE_TOOLCHAIN_FILE=../aarch64_toolchain.cmake \
+    -DCMAKE_INSTALL_PREFIX=/usr/$_target/usr \
+    -DCMAKE_INSTALL_LIBDIR=/usr/$_target/usr/lib \
     -DBUILD_SHARED_LIBS=yes \
     .
 
   make
+fi
 }
 
-check() {
-  # compile without assertions
-  CXXFLAGS+=\ -DNDEBUG
-
-  make -C "$_pkgname-$pkgver" test
-}
+# check() {
+#   # compile without assertions
+#   local s readelfarch
+#   readelfarch='AArch64'
+#   CXXFLAGS+=\ -DNDEBUG
+#
+#   make -C "$_pkgname-$pkgver" test
+# }
 
 package() {
   cd "$_pkgname-$pkgver"
